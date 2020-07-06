@@ -1,0 +1,36 @@
+spring:
+  rabbitmq:
+    ####连接地址
+    host: 106.13.85.43
+    ####端口号
+    port: 5672
+    ####账号
+    username: admin
+    ####密码
+    password: admin
+    ### 地址
+    virtual-host: /tjTest
+    ###开启消息确认模式
+    template:
+      ##开启 mandatory: true basic.return 方法将消息返还给生产者
+      mandatory: true
+
+
+    listener:
+      simple:
+        ##手动ack
+        acknowledge-mode: manual
+        default-requeue-rejected: false
+        concurrency: 1
+        max-concurrency: 1
+        prefetch: 5
+        retry:
+          enabled: true
+
+    publisher-returns: true #支持消息发送失败返回队列
+    publisher-confirm-type: correlated
+
+
+
+server:
+  port: 8080

@@ -1,0 +1,13 @@
+三.消息确认机制以及保证消息的可靠性
+
+1：RabbitMQ有事务机制跟消息确认机制,开启事务机制的话,会让 channel 处于 transactional 模式、向其 publish 消息、执行 commit 动作。
+在这种方式下，事务机制会带来大量的多余开销，并会导致吞吐量下降 250% ,所以推荐使用消息确认机制,这里需要注意一点,事务机制跟确认机制只能开启一个!
+
+2：消息确认机制，client 首先要发送 confirm.select 方法帧。取决于是否设置了 no-wait 属性，broker 会相应的判定是否以 confirm.select-ok
+进行应答。一旦在 channel 上使用 confirm.select方法，channel 就将处于确认模式。一旦 channel 处于 确认模式，broker 和 client 都将启
+动消息计数（以 confirm.select 为基础从 1 开始计数）。broker 会在处理完消息后，在当前channel 上通过发送 basic.ack 的方式对其进行
+confirm 。delivery-tag 域的值标识了被 confirm 消息的序列号。broker 也可以通过设置 basic.ack 中的 multiple 域来表明到指定序列号为止
+的所有消息都已被 broker 正确的处理了。
+
+3：开启消息确认模式,队列持久化,交换机持久化,消息持久化,及可保证消息的可靠性(极端情况除外,比如消息队列中的消息在持久化硬盘的过程中宕机,
+此时的消息可能会丢失)
